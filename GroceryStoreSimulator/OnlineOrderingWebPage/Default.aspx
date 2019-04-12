@@ -12,7 +12,6 @@
 </head>
 <body>
     <form id="frmOrderForm" runat="server">
-
         <div id="divHead" class="jumbotron container bg-primary">
             <asp:Label ID="lbl" runat="server" Text="General Grocery Store" CssClass="display-3"></asp:Label><br />
              <asp:Image ID="imgGroceries" runat="server" ImageUrl="App_Themes/DefaultTheme/Groceries.bmp" />
@@ -23,9 +22,8 @@
                 <asp:Label ID="lblLoyaltyNumber" runat="server" Text="Loyalty Number:" CssClass="h2 "></asp:Label>
                 <asp:TextBox ID="tbxLoyaltyNumber" runat="server" CssClass="form-control"></asp:TextBox><br />
                 <asp:Label ID="lblStores" runat="server" Text="Store:" CssClass="h2"></asp:Label>
-                <asp:ListBox ID="lbxStores" runat="server" DataSourceID="GroceryStoreSimulator" DataTextField="Store" DataValueField="Store" CssClass="form-control"></asp:ListBox>
-                <asp:SqlDataSource ID="GroceryStoreSimulator" runat="server" ConnectionString="<%$ ConnectionStrings:GroceryStoreSimulatorConnectionString %>" SelectCommand="SELECT [Store] FROM [tStore]"></asp:SqlDataSource><br /><br />
-            </div>
+                <asp:ListBox ID="lbxStores" runat="server" CssClass="form-control"></asp:ListBox>
+               </div>
             <asp:Button ID="btnSelect" runat="server" Text="Select" CssClass="btn btn-dark btn-lg btn-block" />
         </div>
     </form>
