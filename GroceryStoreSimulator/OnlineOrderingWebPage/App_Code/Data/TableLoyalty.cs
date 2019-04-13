@@ -9,13 +9,15 @@ using System.Web;
 /// Summary description for tLoyalty
 /// </summary>
 [Table("tLoyalty")]
-public class Loyalty
+public class TableLoyalty
 {
+    public TableLoyalty() { }
+
     [Key]
     public int LoyaltyID { get; set; }
     public string LoyaltyNumber { get; set; }
     public int StoreID { get; set; }
     public DateTime DateOfIssue { get; set; }
     public string ZipCode { get; set; }
-    public int LoyaltyStatusId { get; set; }
+    public int? LoyaltyStatusId { get; set; }
 }
