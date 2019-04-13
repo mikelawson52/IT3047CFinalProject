@@ -21,10 +21,14 @@
             <div id="divBody" class="form-group bg-secondary">
                 <asp:Label ID="lblLoyaltyNumber" runat="server" Text="Loyalty Number:" CssClass="h2 "></asp:Label>
                 <asp:TextBox ID="tbxLoyaltyNumber" runat="server" CssClass="form-control"></asp:TextBox><br />
-                <asp:Label ID="lblStores" runat="server" Text="Store:" CssClass="h2"></asp:Label>
-                <asp:ListBox ID="lbxStores" runat="server" CssClass="form-control"></asp:ListBox>
-               </div>
-            <asp:Button ID="btnSelect" runat="server" Text="Select" CssClass="btn btn-dark btn-lg btn-block" />
+                <asp:Label ID="lblSelectStore" runat="server" Text="Store:" CssClass="h2"></asp:Label>
+                <asp:ListBox ID="lbxSelectStore" runat="server" CssClass="form-control" Visible="True"></asp:ListBox>
+                <asp:ListBox ID="lbxSelectProduct" runat="server" Visible="False"></asp:ListBox>
+                <asp:Label ID="lblSelectProduct" runat="server" Text="Product" Visible="False"></asp:Label>
+                <asp:TextBox ID="tbxSelectQuantity" runat="server" Text="" Visible="False"></asp:TextBox>
+                </div>
+            <asp:Button ID="btnSelect" runat="server" Text="Select" CssClass="btn btn-dark btn-lg btn-block" OnClick="btnSelect_Click" />
+            <asp:Button ID="btnSubmitOrder" runat="server" Text="Submit Order" CssClass="btn btn-success btn-lg btn-block" Visible="False" />
         </div>
     </form>
 </body>
