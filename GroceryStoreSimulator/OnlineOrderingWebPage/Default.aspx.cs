@@ -20,4 +20,10 @@ public partial class _Default : System.Web.UI.Page {
         btnSubmitOrder.Visible = true;
 
     }
+
+    protected void btnSubmitOrder_Click(object sender, EventArgs e)
+    {
+       
+       //OrderInformation order = new OrderInformation(tbxLoyaltyNumber.Text, lbxSelectStore.SelectedItem);
+    }
 }

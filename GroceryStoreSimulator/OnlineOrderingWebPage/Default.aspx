@@ -28,7 +28,7 @@
             <div id="divBodyHidden" runat="server" class="form-group bg-secondary">
                 <asp:Label ID="lblSelectProduct" runat="server" Text="Product" CssClass="h2" Visible="False"></asp:Label><asp:ListBox ID="lbxSelectProduct" runat="server" Visible="false" CssClass="form-control"></asp:ListBox><br /><br />
                 <asp:Label ID="lblSelectQuantity" runat="server" Text="Quantity" CssClass="h2" Visible="False"></asp:Label><asp:TextBox ID="tbxSelectQuantity" runat="server" Text="" CssClass="form-control" Visible="false"></asp:TextBox><br /><br />
-                <asp:Button ID="btnSubmitOrder" runat="server" Text="Submit Order" CssClass="btn btn-success btn-lg btn-block" Visible="false" />
+                <asp:Button ID="btnSubmitOrder" runat="server" Text="Submit Order" CssClass="btn btn-success btn-lg btn-block" Visible="false" OnClick="btnSubmitOrder_Click" />
             </div>
         </div>
     </form>
