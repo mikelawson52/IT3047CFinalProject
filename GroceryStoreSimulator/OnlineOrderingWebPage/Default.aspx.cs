@@ -28,12 +28,7 @@ public partial class _Default : System.Web.UI.Page {
 
     protected void btnSelect_Click(object sender, EventArgs e)
     {
-        //When a user clicks the select button, display Products and Quantity Textbox for each product a user selects. 
-        //lblSelectProduct.Visible = true;
-        //lblSelectQuantity.Visible = true;
-        //lbxSelectProduct.Visible = true;
-        //tbxSelectQuantity.Visible = true;
-        ///btnSubmitOrder.Visible = true;
+        //When a user clicks the select button, display Products and Quantity Textbox for each product a user selects.
         divBodyHidden.Visible = true;
 
     }
