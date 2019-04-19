@@ -24,6 +24,10 @@ public class TableProduct
     public int? ManufacturerID { get; set; }
     public int? BrandID { get; set; }
     public decimal? InitialPricePerSellableUnit { get; set; }
+    [ForeignKey("Name")]
     public int NameID { get; set; }
     public string Description { get; set; }
+
+    //FK relationship builder
+    public TableName Name { get; set; }
 }
