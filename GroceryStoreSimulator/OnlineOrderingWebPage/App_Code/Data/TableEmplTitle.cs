@@ -18,4 +18,7 @@ public class TableEmplTitle
     public string EmplTitle { get; set; }
     public bool IsStoreManager { get; set; }
     public bool IsSelfScan { get; set; }
+
+    //FK Builder
+    public ICollection<TableEmpl> Empls { get; set; }
 }

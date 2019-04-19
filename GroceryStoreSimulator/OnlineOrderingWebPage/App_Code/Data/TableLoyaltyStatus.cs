@@ -12,7 +12,7 @@ using System.Web;
 [Table("tLoyaltyStatus")]
 public class TableLoyaltyStatus
 {
-    public TableLoyaltyStatus(){ }
+    public TableLoyaltyStatus() { }
 
     [Key]
     public int LoyaltyStatusID { get; set; }
@@ -21,4 +21,7 @@ public class TableLoyaltyStatus
     public bool IsSuspended { get; set; }
     public bool IsPending { get; set; }
     public bool CanPlaceOnlineOrder { get; set; }
+
+    //FK relation builder
+    public ICollection<TableLoyalty> Loyalties { get; set; }
 }

@@ -22,4 +22,5 @@ public class GroceryStoreSimulatorContext : DbContext
     public DbSet<TableStoreStatus> StoreStatus { get; set; }
     public DbSet<TableTransaction> Transaction { get; set; }
     public DbSet<TableTransactionDetail> TransactionDetail { get; set; }
+    public DbSet<TableStoreHistory> StoreHistory { get; set; }
 }

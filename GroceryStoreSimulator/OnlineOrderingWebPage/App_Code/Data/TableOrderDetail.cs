@@ -16,11 +16,17 @@ public class TableOrderDetail
 
     [Key]
     public int OrderDetailID { get; set; }
+    [ForeignKey("Order")]
     public int OrderID { get; set; }
+    [ForeignKey("Product")]
     public int ProductID { get; set; }
     public int Quantity { get; set; }
     public decimal TotalAmountChargedToCustomer { get; set; }
     public string Comment { get; set; }
     public int? CouponDetailID { get; set; }
     public bool UnavailableWhenOrderWasFilled { get; set; }
+
+    //FK Relation Builder
+    public TableOrder Order { get; set; }
+    public TableProduct Product { get; set; }
 }
