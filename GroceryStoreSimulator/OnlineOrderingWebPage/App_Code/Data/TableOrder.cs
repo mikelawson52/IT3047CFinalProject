@@ -15,13 +15,21 @@ public class TableOrder
 
     [Key]
     public int OrderID { get; set; }
+    [ForeignKey("Loyalty")]
     public int LoyaltyID { get; set; }
     public DateTime DateTimeCreated { get; set; }
+    [ForeignKey("Store")]
     public int StoreID { get; set; }
+    [ForeignKey("OrderStatus")]
     public int OrderStatusID { get; set; }
     public decimal DeliveryCharge { get; set; }
     public string Notes { get; set; }
     public string DeliveryAddress { get; set; }
     public DateTime? DateTimeDelivered { get; set; }
     public bool? AllOrNone { get; set; }
+
+    //FK Relation Builder
+    public TableLoyalty Loyalty { get; set; }
+    public TableStore Store { get; set; }
+    public TableOrderStatus OrderStatus { get; set; }
 }

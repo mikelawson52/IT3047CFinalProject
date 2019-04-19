@@ -22,4 +22,7 @@ public class TableStoreStatus
     public bool AppliesToVirtualStores { get; set; }
     public bool AppliesToPhysicalStores { get; set; }
     public bool AcceptingOnlineOrders { get; set; }
+
+    //FK Table Relationships
+    public ICollection<TableStoreHistory> StoreHistories { get; set; }
 }

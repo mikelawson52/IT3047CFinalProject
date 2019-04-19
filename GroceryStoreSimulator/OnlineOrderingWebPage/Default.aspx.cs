@@ -23,6 +23,11 @@ public partial class _Default : System.Web.UI.Page {
             var test11 = context.StoreStatus.ToList();
             var test12 = context.Transaction.Take(100).ToList();
             var test13 = context.TransactionDetail.Take(100).ToList();
+            var test14 = context.StoreHistory.Take(500).ToList();
+            //var test15 = context.Order
+            //    .Include("Store")
+            //    .Where(x => x.Store.State == "OH")
+            //    .ToList();
         }
     }
 
