@@ -20,4 +20,7 @@ public class TableOrderStatus
     public bool IsOpen { get; set; }
     public bool IsDelivered { get; set; }
     public bool IsClosed { get; set; }
+
+    //FK relation builder
+    public ICollection<TableOrder> Orders { get; set; }
 }

@@ -11,15 +11,22 @@ using System.Web;
 [Table("tEmpl")]
 public class TableEmpl
 {
-    public TableEmpl(){ }
+    public TableEmpl() { }
 
     [Key]
     public int EmplID { get; set; }
     public string Empl { get; set; }
     public string LastName { get; set; }
     public string FirstName { get; set; }
+    [ForeignKey("Store")]
     public int? StoreID { get; set; }
+
+    [ForeignKey("EmplTitle")]
     public int? EmplTitleID { get; set; }
     public bool IsSelfScan { get; set; }
     public DateTime? DateStamp { get; set; }
+
+    //Foreign key builders
+    public TableStore Store { get; set; }
+    public TableEmplTitle EmplTitle { get; set; }
 }

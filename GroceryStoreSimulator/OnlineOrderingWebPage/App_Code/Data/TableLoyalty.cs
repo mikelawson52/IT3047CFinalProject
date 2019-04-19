@@ -19,5 +19,10 @@ public class TableLoyalty
     public int StoreID { get; set; }
     public DateTime DateOfIssue { get; set; }
     public string ZipCode { get; set; }
+    [ForeignKey("LoyaltyStatus")]
     public int? LoyaltyStatusId { get; set; }
+
+    //FK Relationship Builder
+    public TableLoyaltyStatus LoyaltyStatus { get; set; }
+    public ICollection<TableOrder> Orders { get; set; }
 }

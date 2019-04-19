@@ -26,4 +26,9 @@ public class TableStore
     public string StoreNumber { get; set; }
     public bool IsVirtual { get; set; }
     public int CountryID { get; set; }
+
+    //Foreign Key Table Relationship
+    public ICollection<TableEmpl> Empls { get; set; }
+    public ICollection<TableStoreHistory> StoreHistories { get; set; }
+    public ICollection<TableOrder> Orders { get; set; }
 }
