@@ -13,7 +13,7 @@
 <body>
     <form id="form1" runat="server">
         <div id="div1" runat="server" class="jumbotron container bg-primary">
-            <asp:Label ID="lbl" runat="server" Text="General Grocery Store" CssClass="display-3"></asp:Label><br />
+            <asp:Label ID="lbl" runat="server" Text="General Grocery Store" CssClass="display-3"></asp:Label>
             <asp:Image ID="imgGroceries" runat="server" ImageUrl="App_Themes/DefaultTheme/Groceries.bmp" />
             <asp:Label ID="lblHeading2" runat="server" Text="Order Confirmation" CssClass="h1"></asp:Label><br />
             <br />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
 
 /// <summary>
@@ -48,7 +49,28 @@ public class OrderInformation
     public string loyaltyNumber
     {
         get { return mLoyaltyNumber; }
-        set { mLoyaltyNumber = value; }
+        set
+        {
+            if (mLoyaltyNumber.Length != 0)
+            {
+                double number;
+                // Use tryparse to verify the values are digits and not letters. 
+                bool success = Double.TryParse(mLoyaltyNumber,out number);
+                if (success)
+                {
+                    mLoyaltyNumber = value;
+                }
+                else
+                {
+                    // Do not allow a loyalty number to be returned  
+                    Console.WriteLine("Loyalty number must only contain Digits.");
+                }
+            }
+            else
+            {
+              Console.WriteLine("You must enter a Loyalty Number.");
+            }
+        }
     }
     public string selectedStore
     {
@@ -66,6 +88,4 @@ public class OrderInformation
         get { return mOrderStatus; }
         set { mOrderStatus = value; }
     }
-    
-    
 }
