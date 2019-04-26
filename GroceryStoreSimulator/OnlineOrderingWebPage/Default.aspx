@@ -8,25 +8,39 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="content/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
     <form id="frmOrderForm" runat="server">
+        <div id="divHead" runat="server" class="jumbotron container bg-primary">
 
-        <div id="divHead" class="jumbotron container bg-primary">
-            <asp:Label ID="lbl" runat="server" Text="General Grocery Store" CssClass="display-3"></asp:Label><br />
-             <asp:Image ID="imgGroceries" runat="server" ImageUrl="App_Themes/DefaultTheme/Groceries.bmp" />
-            <asp:Label ID="lblHeading2" runat="server" Text="Online Grocery Order Form" CssClass="h1"></asp:Label><br />
+            <asp:Label ID="lbl" runat="server" Text="General Grocery Store" class="display-3"></asp:Label>
+            <asp:Image ID="imgGroceries" runat="server" ImageUrl="App_Themes/DefaultTheme/Groceries.bmp" />
+            <asp:Label ID="lblHeading2" runat="server" Text="Online Grocery Order Form" class="h1"></asp:Label><br />
             <br />
             <asp:Label ID="lblHeading3" runat="server" Text="PLEASE ENTER YOUR LOYALTY NUMBER AND SELECT YOUR STORE" CssClass="h2"></asp:Label><br />
-            <div id="divBody" class="form-group bg-secondary">
-                <asp:Label ID="lblLoyaltyNumber" runat="server" Text="Loyalty Number:" CssClass="h2 "></asp:Label>
-                <asp:TextBox ID="tbxLoyaltyNumber" runat="server" CssClass="form-control"></asp:TextBox><br />
-                <asp:Label ID="lblStores" runat="server" Text="Store:" CssClass="h2"></asp:Label>
-                <asp:ListBox ID="lbxStores" runat="server" DataSourceID="GroceryStoreSimulator" DataTextField="Store" DataValueField="Store" CssClass="form-control"></asp:ListBox>
-                <asp:SqlDataSource ID="GroceryStoreSimulator" runat="server" ConnectionString="<%$ ConnectionStrings:GroceryStoreSimulatorConnectionString %>" SelectCommand="SELECT [Store] FROM [tStore]"></asp:SqlDataSource><br /><br />
+            <div id="divBody" runat="server" class="form-group bg-secondary">
+                <asp:Label ID="lblLoyaltyNumber" runat="server" Text="Loyalty Number " class="h2 "></asp:Label>
+                <asp:TextBox ID="tbxLoyaltyNumber" runat="server" class="form-control"></asp:TextBox><br />
+                <div id="divWarningLoyalty" runat="server" visible="false" class="alert-warning">
+                    <asp:Label ID="lblLoyalty1" runat="server" Text="Please enter your loyalty number" Visible="false"></asp:Label>
+                    <asp:Label ID="lblLoyalty2" runat="server" Text="Loyalty Number must contain only digits" Visible="false"></asp:Label>
+                </div>
+                <asp:Label ID="lblSelectStore" runat="server" Text="Store:" class="h2"></asp:Label>
+                <asp:ListBox ID="lbxSelectStore" runat="server" class="form-control" Visible="True"></asp:ListBox>
+                <div id="divWarningStore" runat="server" visible="false" class="alert-warning">
+                    <asp:Label ID="lblWarningStore" runat="server" Text="You did not select a store!"></asp:Label>
+                </div>
             </div>
-            <asp:Button ID="btnSelect" runat="server" Text="Select" CssClass="btn btn-dark btn-lg btn-block" />
+            <asp:Button ID="btnSelect" runat="server" Text="Select" class="btn btn-dark btn-lg btn-block" OnClick="btnSelect_Click" /><br />
+            <br />
+            <div id="divBodyHidden" runat="server" class="form-group bg-secondary" visible="false">
+                <asp:Label ID="lblSelectProduct" runat="server" Text="Product" class="h2"></asp:Label><asp:ListBox ID="lbxSelectProduct" runat="server" class="form-control"></asp:ListBox><br />
+                <br />
+                <asp:Label ID="lblSelectQuantity" runat="server" Text="Quantity" class="h2"></asp:Label><asp:TextBox ID="tbxSelectQuantity" runat="server" Text="" class="form-control"></asp:TextBox><br />
+                <br />
+                <asp:Button ID="btnSubmitOrder" runat="server" Text="Submit Order" class="btn btn-success btn-lg btn-block" OnClick="btnSubmitOrder_Click" />
+            </div>
         </div>
     </form>
 </body>
