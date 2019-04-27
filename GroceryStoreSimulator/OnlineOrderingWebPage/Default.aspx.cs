@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Data.Entity;
 
 public partial class _Default : System.Web.UI.Page
 {
@@ -11,29 +12,27 @@ public partial class _Default : System.Web.UI.Page
     {
         using (GroceryStoreSimulatorContext context = new GroceryStoreSimulatorContext())
         {
-            //All DB Context's work.  Need to build forign key relationships still.
-            /*****
-                var test1 = context.Empl.Take(100).ToList();
-                var test2 = context.EmplStatus.ToList();
-                var test3 = context.EmplTitle.ToList();
-                var test4 = context.Loyalty.ToList();
-                var test5 = context.LoyaltyStatus.ToList();
-                var test6 = context.Order.ToList();
-                var test7 = context.OrderDetail.ToList();
-                var test8 = context.OrderStatus.ToList();
-                var test9 = context.Product.ToList();
-                var test10 = context.Store.ToList();
-                var test11 = context.StoreStatus.ToList();
-                var test12 = context.Transaction.Take(100).ToList();
-                var test13 = context.TransactionDetail.Take(100).ToList();
-                var test14 = context.StoreHistory.Take(500).ToList();
-               // var test15 = context.Order
-                    .Include("Store")
-                    .Where(x => x.Store.State == "OH")
-                   .ToList();
-             ******/
-
+            //Get store statuses.
+            var storeStatuses = context.StoreStatus.ToList();
+            //Get all store statuses that can't be ordered from.
+            var unavailableStoreStatusIds = storeStatuses.Where(x => x.IsClosedForever || !x.AcceptingOnlineOrders).Select(x => x.StoreStatusID);
+            //Get stores
             var storeSelectionOptions = context.Store.ToList();
+            //Get store history, join/include store status, group by store
+            var storeHistory = context.StoreHistory.Include(x => x.StoreStatus).GroupBy(x => x.StoreID);
+            //Go through every store group in store history
+            foreach (var storeHistoryRow in storeHistory)
+            {
+                //Get the newest store history record in a store group in order to determine the store's current status.
+                var newestStoreHistoryRecord = storeHistoryRow.OrderByDescending(x => x.StoreHistoryID).FirstOrDefault();
+                //Check if the store is currently unavailable to order from and remove it from the selection list if it is unavailable.
+                if (unavailableStoreStatusIds.Contains(newestStoreHistoryRecord.StoreStatus.StoreStatusID))
+                {
+                    var storeToRemove = storeSelectionOptions.FirstOrDefault(x => x.StoreID == newestStoreHistoryRecord.StoreID);
+                    storeSelectionOptions.Remove(storeToRemove);
+                }
+            }
+            //Set the store to be the visible option for stores, set the id to be the value of the option, and bind the data to the select box.
             lbxSelectStore.DataValueField = "StoreID";
             lbxSelectStore.DataTextField = "Store";
             lbxSelectStore.DataSource = storeSelectionOptions;
