@@ -22,14 +22,15 @@
             <div id="divBody" runat="server" class="form-group bg-secondary">
                 <asp:Label ID="lblLoyaltyNumber" runat="server" Text="Loyalty Number " class="h2 "></asp:Label>
                 <asp:TextBox ID="tbxLoyaltyNumber" runat="server" class="form-control"></asp:TextBox><br />
-                <div id="divWarningLoyalty" runat="server" visible="false" class="alert-warning">
-                    <asp:Label ID="lblLoyalty1" runat="server" Text="Please enter your loyalty number" Visible="false"></asp:Label>
-                    <asp:Label ID="lblLoyalty2" runat="server" Text="Loyalty Number must contain only digits" Visible="false"></asp:Label>
+                <div id="divWarningLoyalty" runat="server" visible="true" class="alert-warning">
+                    <asp:Label ID="lblLoyaltyWarningEmpty" runat="server" Text="Please enter your loyalty number" Visible="false"></asp:Label>
+                    <asp:Label ID="lblLoyaltyWarningNaN" runat="server" Text="Loyalty Number must contain only digits" Visible="false"></asp:Label>
+                    <asp:Label ID="lblLoyaltyWarningBadLoyaltyNum" runat="server" Text="Loyalty Number given does not exist or is not currently valid for online ordering" Visible="false"></asp:Label>
                 </div>
                 <asp:Label ID="lblSelectStore" runat="server" Text="Store:" class="h2"></asp:Label>
-                <asp:ListBox ID="lbxSelectStore" runat="server" class="form-control" Visible="True"></asp:ListBox>
-                <div id="divWarningStore" runat="server" visible="false" class="alert-warning">
-                    <asp:Label ID="lblWarningStore" runat="server" Text="You did not select a store!"></asp:Label>
+                <asp:ListBox ID="lbxSelectStore" runat="server" class="form-control" Visible="True" AppendDataBoundItems="true"></asp:ListBox>
+                <div id="divWarningStore" runat="server" class="alert-warning">
+                    <asp:Label ID="lblWarningStore" runat="server" Visible="false" Text="You did not select a store!"></asp:Label>
                 </div>
             </div>
             <asp:Button ID="btnSelect" runat="server" Text="Select" class="btn btn-dark btn-lg btn-block" OnClick="btnSelect_Click" /><br />

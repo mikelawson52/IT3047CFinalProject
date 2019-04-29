@@ -42,61 +42,108 @@ public partial class _Default : System.Web.UI.Page
 
     protected void btnSelect_Click(object sender, EventArgs e)
     {
-        // Verify the data entered by the user. 
-        double number;
-        // Checks if the loyalty number contains digits. 
-        bool success = Double.TryParse(tbxLoyaltyNumber.Text, out number);
+        /*************************************    Loyalty Number Validation.     ***************************************/
+        //Keep track of if the entire section is complete and valid.
+        bool isSectionComplete = true;
 
         // Do not allow loyalty number to be left blank. 
-        if (tbxLoyaltyNumber.Text.Length != 0)
-        { // If the number is not entered give a warning
-            divWarningLoyalty.Visible = true;
-            lblLoyalty1.Visible = true;
+        if (tbxLoyaltyNumber.Text.Length == 0)
+        {
+            lblLoyaltyWarningEmpty.Visible = true;
+            isSectionComplete = false;
+        }
+        //Else reset the visibility of the warning
+        else
+        {
+            lblLoyaltyWarningEmpty.Visible = false;
+        }
 
-        }
-        else
+        //Check if the input is a number(double)
+        double number = 0;
+        bool isLoyaltyANumber = false;
+        if (!lblLoyaltyWarningEmpty.Visible)
         {
-            divWarningLoyalty.Visible = false;
-        }
-    
-        //Verify the Selection of the Selected store
-        // Make the selected store a string for verification
-   
-        String selectedStore = lbxSelectStore.Text.ToString();
-        //If there is no selected store give a warning
-        if (selectedStore.Length != 0)
-        {
-            divWarningStore.Visible = true;
-
-        }
-        else
-        {
-            divWarningStore.Visible = false;
-        }
-              
-       
-        if (!success)
-        {
-            // If the number is not a digit give a warning.
-            divWarningLoyalty.Visible = true;
-            lblLoyalty2.Visible = true;
-            
-        }
-        else
-        {
-            divWarningLoyalty.Visible = false;
-            lblLoyalty2.Visible = false;
-        }
-       /***
+            // Try and convert loyalty number to a double.
+            isLoyaltyANumber = Double.TryParse(tbxLoyaltyNumber.Text, out number);
+            if (!isLoyaltyANumber)
             {
-                // When a user clicks the select button, display Products and Quantity Textbox for each product a user selects.
-                divBodyHidden.Visible = true;
+                lblLoyaltyWarningNaN.Visible = true;
+                isSectionComplete = false;
             }
-            // Any other cases give a warning. 
-            Response.Write("There was an error submitting your request. Please check your entries and try again.");
-            Response.Write("From Default.asax, Ln 60");
+            else
+            {
+                lblLoyaltyWarningNaN.Visible = false;
+            }
         }
-        ******/
+        //Else reset the visibility of the warning.
+        else
+        {
+            lblLoyaltyWarningNaN.Visible = false;
+        }
+
+        //If the loyalty number passed the previous two checks, we need to make sure the loyalty number is valid in the DB.
+        if (!lblLoyaltyWarningEmpty.Visible && !lblLoyaltyWarningNaN.Visible)
+        {
+            //open DB connection
+            using (GroceryStoreSimulatorContext context = new GroceryStoreSimulatorContext())
+            {
+                //default value
+                bool isLoyaltyUsable = false;
+                //get all loyalty numbers from the DB and include their status
+                var loyaltyNumbers = context.Loyalty.Include(x => x.LoyaltyStatus).ToList();
+                //Loop through each loyalty number
+                foreach (var loyaltyNumber in loyaltyNumbers)
+                {
+                    //If the loyalty number in the DB matches the loyalty number entered, and the loyalty number is active, and the loyalty number can place online orders, mark it as a usable #.
+                    if (loyaltyNumber.LoyaltyNumber.Trim().Equals(number.ToString()) && loyaltyNumber.LoyaltyStatus.IsActive && loyaltyNumber.LoyaltyStatus.CanPlaceOnlineOrder)
+                    {
+                        isLoyaltyUsable = true;
+                        break;
+                    }
+                }
+                //Tell the user if their loyalty number was valid or not.
+                if (!isLoyaltyUsable)
+                {
+                    lblLoyaltyWarningBadLoyaltyNum.Visible = true;
+                    isSectionComplete = false;
+                }
+                else
+                {
+                    lblLoyaltyWarningBadLoyaltyNum.Visible = false;
+                }
+            }
+        }
+        //Else reset the visibility of the warning
+        else
+        {
+            lblLoyaltyWarningBadLoyaltyNum.Visible = false;
+        }
+
+        /*************************************    Store Select Validation.     ***************************************/
+
+        ListItem selectedStore = lbxSelectStore.SelectedItem;
+        //Check if a store was selected, give a warning if not.
+        if (selectedStore == null)
+        {
+            lblWarningStore.Visible = true;
+            isSectionComplete = false;
+        }
+        else
+        {
+            lblWarningStore.Visible = false;
+        }
+
+        /*************************************    Populate Products Selection.     ***************************************/
+        if (isSectionComplete)
+        {
+            using (GroceryStoreSimulatorContext context = new GroceryStoreSimulatorContext())
+            {
+                //var products = context.Product.Include(x => x.)
+            }
+            divBodyHidden.Visible = true;
+        }
+        //Make sure the page was completely valid.  If it was, display the next options.
+        divBodyHidden.Visible = isSectionComplete ? true : false;
     }
 
     protected void btnSubmitOrder_Click(object sender, EventArgs e)
