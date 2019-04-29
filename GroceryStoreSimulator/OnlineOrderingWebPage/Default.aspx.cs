@@ -179,11 +179,11 @@ public partial class _Default : System.Web.UI.Page
     }
     protected void btnAddProductToOrder_Click(object sender, EventArgs e)
     {
-
+        //todo - Add logic for when user selects a product.  Make sure there is a quantity, and then save that to a cart and show the user the updated cart.
     }
     protected void btnSubmitOrder_Click(object sender, EventArgs e)
     {
-
+        //todo - Save to database, show them an order summary.
         //OrderInformation order = new OrderInformation(tbxLoyaltyNumber.Text, lbxSelectStore.SelectedItem.ToString());
     }
 }
