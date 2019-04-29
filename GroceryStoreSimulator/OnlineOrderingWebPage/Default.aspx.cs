@@ -15,20 +15,27 @@ public partial class _Default : System.Web.UI.Page
             //Get store statuses.
             var storeStatuses = context.StoreStatus.ToList();
             //Get all store statuses that can't be ordered from.
-            var unavailableStoreStatusIds = storeStatuses.Where(x => x.IsClosedForever || !x.AcceptingOnlineOrders).Select(x => x.StoreStatusID);
+            var unavailableStoreStatusIds = storeStatuses
+                .Where(x => x.IsClosedForever || !x.AcceptingOnlineOrders)
+                .Select(x => x.StoreStatusID);
             //Get stores
             var storeSelectionOptions = context.Store.ToList();
             //Get store history, join/include store status, group by store
-            var storeHistory = context.StoreHistory.Include(x => x.StoreStatus).GroupBy(x => x.StoreID);
+            var storeHistory = context.StoreHistory
+                .Include(x => x.StoreStatus)
+                .GroupBy(x => x.StoreID);
             //Go through every store group in store history
             foreach (var storeHistoryRow in storeHistory)
             {
                 //Get the newest store history record in a store group in order to determine the store's current status.
-                var newestStoreHistoryRecord = storeHistoryRow.OrderByDescending(x => x.StoreHistoryID).FirstOrDefault();
+                var newestStoreHistoryRecord = storeHistoryRow
+                    .OrderByDescending(x => x.StoreHistoryID)
+                    .FirstOrDefault();
                 //Check if the store is currently unavailable to order from and remove it from the selection list if it is unavailable.
                 if (unavailableStoreStatusIds.Contains(newestStoreHistoryRecord.StoreStatus.StoreStatusID))
                 {
-                    var storeToRemove = storeSelectionOptions.FirstOrDefault(x => x.StoreID == newestStoreHistoryRecord.StoreID);
+                    var storeToRemove = storeSelectionOptions
+                        .FirstOrDefault(x => x.StoreID == newestStoreHistoryRecord.StoreID);
                     storeSelectionOptions.Remove(storeToRemove);
                 }
             }
@@ -90,12 +97,16 @@ public partial class _Default : System.Web.UI.Page
                 //default value
                 bool isLoyaltyUsable = false;
                 //get all loyalty numbers from the DB and include their status
-                var loyaltyNumbers = context.Loyalty.Include(x => x.LoyaltyStatus).ToList();
+                var loyaltyNumbers = context.Loyalty
+                    .Include(x => x.LoyaltyStatus)
+                    .ToList();
                 //Loop through each loyalty number
                 foreach (var loyaltyNumber in loyaltyNumbers)
                 {
                     //If the loyalty number in the DB matches the loyalty number entered, and the loyalty number is active, and the loyalty number can place online orders, mark it as a usable #.
-                    if (loyaltyNumber.LoyaltyNumber.Trim().Equals(number.ToString()) && loyaltyNumber.LoyaltyStatus.IsActive && loyaltyNumber.LoyaltyStatus.CanPlaceOnlineOrder)
+                    if (loyaltyNumber.LoyaltyNumber.Trim().Equals(number.ToString()) 
+                        && loyaltyNumber.LoyaltyStatus.IsActive 
+                        && loyaltyNumber.LoyaltyStatus.CanPlaceOnlineOrder)
                     {
                         isLoyaltyUsable = true;
                         break;
@@ -134,18 +145,42 @@ public partial class _Default : System.Web.UI.Page
         }
 
         /*************************************    Populate Products Selection.     ***************************************/
+        //Make sure the entire previous section was complete and valid first.
         if (isSectionComplete)
         {
+            //Open DB connection and populate products.
             using (GroceryStoreSimulatorContext context = new GroceryStoreSimulatorContext())
             {
-                //var products = context.Product.Include(x => x.)
+                //Web forms didn't like looking into a class's property that contained a different class for databinding, so lets make our own class out of the products!
+                var products = context.Product
+                    .Include(x => x.Name)
+                    .Include(x => x.Brand)
+                    .Include(x => x.Container)
+                    .ToList();
+                List<ProductNameSelectList> productNameSelections = new List<ProductNameSelectList>();
+                foreach (var product in products)
+                {
+                    productNameSelections.Add(new ProductNameSelectList(product));
+                }
+
+                lbxSelectProduct.DataValueField = "ProductID";
+                lbxSelectProduct.DataTextField = "VisibleOptionText";
+                lbxSelectProduct.DataSource = productNameSelections;
+                lbxSelectProduct.DataBind();
             }
+            //Make new section visible
             divBodyHidden.Visible = true;
         }
-        //Make sure the page was completely valid.  If it was, display the next options.
-        divBodyHidden.Visible = isSectionComplete ? true : false;
+        //Else, reset the next section to be not visible.
+        else
+        {
+            divBodyHidden.Visible = false;
+        }
     }
+    protected void btnAddProductToOrder_Click(object sender, EventArgs e)
+    {
 
+    }
     protected void btnSubmitOrder_Click(object sender, EventArgs e)
     {
 

@@ -36,9 +36,12 @@
             <asp:Button ID="btnSelect" runat="server" Text="Select" class="btn btn-dark btn-lg btn-block" OnClick="btnSelect_Click" /><br />
             <br />
             <div id="divBodyHidden" runat="server" class="form-group bg-secondary" visible="false">
-                <asp:Label ID="lblSelectProduct" runat="server" Text="Product" class="h2"></asp:Label><asp:ListBox ID="lbxSelectProduct" runat="server" class="form-control"></asp:ListBox><br />
+                <asp:Label ID="lblSelectProduct" runat="server" Text="Product" class="h2"></asp:Label><asp:ListBox ID="lbxSelectProduct" runat="server" AppendDataBoundItems="true" class="form-control"></asp:ListBox><br />
                 <br />
                 <asp:Label ID="lblSelectQuantity" runat="server" Text="Quantity" class="h2"></asp:Label><asp:TextBox ID="tbxSelectQuantity" runat="server" Text="" class="form-control"></asp:TextBox><br />
+                <br />
+                <asp:Button ID="btnAddProductToOrder" runat="server" Text="Add To Order" class="btn btn-success btn-lg btn-block" OnClick="btnAddProductToOrder_Click" />
+                <asp:ListBox ID="lbxOrderTotal" runat="server" class="form-control" Visible="True" AppendDataBoundItems="true" Enabled="true"></asp:ListBox>
                 <br />
                 <asp:Button ID="btnSubmitOrder" runat="server" Text="Submit Order" class="btn btn-success btn-lg btn-block" OnClick="btnSubmitOrder_Click" />
             </div>
