@@ -20,8 +20,9 @@ public partial class OrderConfirmation : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         using (GroceryStoreSimulatorContext context = new GroceryStoreSimulatorContext())
-        {
-            
+        {          
+            lblOrderInfo.Text += "" + "Order Number: " + ((global_asax)this.Context.ApplicationInstance).orderInformation.OrderNumber;
+
             foreach (var product in ((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart)
             {
                 var productInDB = context.Product.Include(x => x.Name).FirstOrDefault(x => x.ProductID == product.Key);

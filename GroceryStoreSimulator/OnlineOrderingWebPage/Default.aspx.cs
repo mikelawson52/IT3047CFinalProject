@@ -286,6 +286,7 @@ public partial class _Default : System.Web.UI.Page
             context.Order.Add(tableOrder);
             context.SaveChanges();
             var tableOrderSaved = context.Entry(tableOrder);
+            ((global_asax)this.Context.ApplicationInstance).orderInformation.OrderNumber = tableOrderSaved.Entity.OrderID;
 
             foreach (var product in ((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart)
             {
