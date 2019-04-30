@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.28307.421
+VisualStudioVersion = 15.0.27428.2043
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroceryStoreSimulator", "GroceryStoreSimulator\GroceryStoreSimulator.csproj", "{3A401DED-BDC1-4200-9979-7A26AC799637}"
 EndProject
@@ -106,6 +106,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {C9961E63-4749-4FF2-B9B3-8F18A69ECE42}
+		SolutionGuid = {1892EA80-5E74-4DDD-979D-C877E4C954E0}
 	EndGlobalSection
 EndGlobal

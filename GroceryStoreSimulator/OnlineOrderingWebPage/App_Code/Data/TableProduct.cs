@@ -22,12 +22,18 @@ public class TableProduct
     [Column("UPC-A")]
     public string UPC_A { get; set; }
     public int? ManufacturerID { get; set; }
+    [ForeignKey("Brand")]
     public int? BrandID { get; set; }
-    public decimal? InitialPricePerSellableUnit { get; set; }
+    public decimal InitialPricePerSellableUnit { get; set; }
     [ForeignKey("Name")]
     public int NameID { get; set; }
     public string Description { get; set; }
+    [ForeignKey("Container")]
+    public int? ContainerID { get; set; }
+    public double? Size { get; set; }
 
     //FK relationship builder
     public TableName Name { get; set; }
+    public TableBrand Brand { get; set; }
+    public TableContainer Container { get; set; }
 }
