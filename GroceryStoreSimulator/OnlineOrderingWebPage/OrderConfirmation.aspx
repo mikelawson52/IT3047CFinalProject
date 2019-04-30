@@ -18,7 +18,7 @@
             <asp:Label ID="lblHeading2" runat="server" Text="Order Confirmation" CssClass="h1"></asp:Label><br />
             <br />
             <asp:Label ID="lblHeading3" runat="server" Text="Your order has been processed." CssClass="h2"></asp:Label><br />
-            <asp:Table ID="Table1" runat="server"></asp:Table>
+            <asp:Label ID="lblOrderInfo" runat="server" Text="" CssClass=""></asp:Label><br />            
         </div>
     </form>
 </body>

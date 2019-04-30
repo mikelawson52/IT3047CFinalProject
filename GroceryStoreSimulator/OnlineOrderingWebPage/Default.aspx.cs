@@ -5,11 +5,14 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data.Entity;
+using ASP;
 
 public partial class _Default : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        //Make sure the instance of our session variable isn't null. Make a new one if it is.
+        ((global_asax)this.Context.ApplicationInstance).orderInformation = ((global_asax)this.Context.ApplicationInstance).orderInformation ?? new OrderInformation();
         using (GroceryStoreSimulatorContext context = new GroceryStoreSimulatorContext())
         {
             //Get store statuses.
@@ -104,8 +107,8 @@ public partial class _Default : System.Web.UI.Page
                 foreach (var loyaltyNumber in loyaltyNumbers)
                 {
                     //If the loyalty number in the DB matches the loyalty number entered, and the loyalty number is active, and the loyalty number can place online orders, mark it as a usable #.
-                    if (loyaltyNumber.LoyaltyNumber.Trim().Equals(number.ToString()) 
-                        && loyaltyNumber.LoyaltyStatus.IsActive 
+                    if (loyaltyNumber.LoyaltyNumber.Trim().Equals(number.ToString())
+                        && loyaltyNumber.LoyaltyStatus.IsActive
                         && loyaltyNumber.LoyaltyStatus.CanPlaceOnlineOrder)
                     {
                         isLoyaltyUsable = true;
@@ -179,11 +182,128 @@ public partial class _Default : System.Web.UI.Page
     }
     protected void btnAddProductToOrder_Click(object sender, EventArgs e)
     {
-        //todo - Add logic for when user selects a product.  Make sure there is a quantity, and then save that to a cart and show the user the updated cart.
+        //tracking variable for both inputs
+        bool isValidProductAndQuantity = true;
+
+        //Check for a selected product
+        ListItem selectedStore = lbxSelectProduct.SelectedItem;
+        if (selectedStore == null)
+        {
+            lblWarningProduct.Visible = true;
+            isValidProductAndQuantity = false;
+        }
+        //Reset warning visibility
+        else
+        {
+            lblWarningStore.Visible = false;
+        }
+
+        //Check to make sure quantity is a number and isn't empty.
+        if (tbxSelectQuantity.Text.Length == 0)
+        {
+            lblWarningQuantityEmpty.Visible = true;
+            isValidProductAndQuantity = false;
+        }
+        else
+        {
+            lblWarningQuantityEmpty.Visible = false;
+        }
+
+        //Validate quantity is an integer and not equal to 0
+        int quantity = 0;
+        if (!lblWarningQuantityEmpty.Visible)
+        {
+            //Check for quantity being an integer and != 0
+            bool isQuantityAnInt = int.TryParse(tbxSelectQuantity.Text, out quantity);
+            if (!isQuantityAnInt || quantity == 0)
+            {
+                lblWarningQuantityNaN.Visible = true;
+                isValidProductAndQuantity = false;
+            }
+            //Reset visibility
+            else
+            {
+                lblWarningQuantityNaN.Visible = false;
+            }
+        }
+        //Reset visibility
+        else
+        {
+            lblWarningQuantityNaN.Visible = false;
+        }
+
+
+        if (isValidProductAndQuantity)
+        {
+            int selectedProductId = int.Parse(selectedStore.Value);
+            if (((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart.ContainsKey(selectedProductId))
+            {
+                ((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart[selectedProductId] += quantity;
+            }
+            else
+            {
+                ((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart.Add(selectedProductId, quantity);
+            }
+            //show the user whats in their cart
+            lblCurrentShoppingCart.Text = "";
+            using (GroceryStoreSimulatorContext context = new GroceryStoreSimulatorContext())
+            {
+                foreach (var product in ((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart)
+                {
+                    var selectedProduct = context.Product.Include(x => x.Name).FirstOrDefault(x => x.ProductID == product.Key);
+                    lblCurrentShoppingCart.Text += "<br />" + "Item: " + selectedProduct.Name.Name.Trim() + "  -  Quantity: " + product.Value + " - $" + product.Value * selectedProduct.InitialPricePerSellableUnit;
+                }
+            }
+        }
     }
     protected void btnSubmitOrder_Click(object sender, EventArgs e)
     {
-        //todo - Save to database, show them an order summary.
-        //OrderInformation order = new OrderInformation(tbxLoyaltyNumber.Text, lbxSelectStore.SelectedItem.ToString());
+        decimal totalOrderCost = 0;
+        ((global_asax)this.Context.ApplicationInstance).orderInformation.StoreId = int.Parse(lbxSelectStore.SelectedItem.Value);
+        ((global_asax)this.Context.ApplicationInstance).orderInformation.LoyaltyNumber = double.Parse(tbxLoyaltyNumber.Text);
+
+        //Open DB connection and save the order.
+        using (GroceryStoreSimulatorContext context = new GroceryStoreSimulatorContext())
+        {
+            int loyaltyId = 0;
+            var loyalties = context.Loyalty.ToList();
+            foreach (var loyalty in loyalties)
+            {
+                if (double.Parse(loyalty.LoyaltyNumber.Trim()) == ((global_asax)this.Context.ApplicationInstance).orderInformation.LoyaltyNumber)
+                {
+                    loyaltyId = loyalty.LoyaltyID;
+                    break;
+                }
+            }
+            TableOrder tableOrder = new TableOrder()
+            {
+                LoyaltyID = loyaltyId,
+                DateTimeCreated = DateTime.Now,
+                OrderStatusID = context.OrderStatus.FirstOrDefault(x => x.IsOpen).OrderStatusID,
+                StoreID = ((global_asax)this.Context.ApplicationInstance).orderInformation.StoreId
+            };
+
+            context.Order.Add(tableOrder);
+            context.SaveChanges();
+            var tableOrderSaved = context.Entry(tableOrder);
+
+            foreach (var product in ((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart)
+            {
+                decimal totalCost = 0;
+                totalCost = context.Product.FirstOrDefault(x => x.ProductID == product.Key).InitialPricePerSellableUnit * product.Value;
+                totalOrderCost += totalCost;
+                TableOrderDetail tableOrderDetail = new TableOrderDetail()
+                {
+                    OrderID = tableOrderSaved.Entity.OrderID,
+                    ProductID = product.Key,
+                    Quantity = product.Value,
+                    TotalAmountChargedToCustomer = totalCost
+                };
+                context.OrderDetail.Add(tableOrderDetail);
+                context.SaveChanges();
+            }
+        }
+        ((global_asax)this.Context.ApplicationInstance).orderInformation.TotalOrderCost = totalOrderCost;
+        Response.Redirect("/OrderConfirmation.aspx");
     }
 }
