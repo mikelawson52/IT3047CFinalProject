@@ -241,10 +241,11 @@ public partial class _Default : System.Web.UI.Page
             lblWarningQuantityNaN.Visible = false;
         }
 
-
+        //If product is selected and quantity has a valid value, add it to your shopping cart and display that to the user.
         if (isValidProductAndQuantity)
         {
             int selectedProductId = int.Parse(selectedProductLbxItem.Value);
+            //If the user has already selected that product, add the quantity to the existing quantity
             if (((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart.ContainsKey(selectedProductId))
             {
                 ((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart[selectedProductId] += quantity;
@@ -267,6 +268,7 @@ public partial class _Default : System.Web.UI.Page
     }
     protected void btnSubmitOrder_Click(object sender, EventArgs e)
     {
+        //Add storeId and loyalty number to the session
         decimal totalOrderCost = 0;
         ((global_asax)this.Context.ApplicationInstance).orderInformation.StoreId = int.Parse(lbxSelectStore.SelectedItem.Value);
         ((global_asax)this.Context.ApplicationInstance).orderInformation.LoyaltyNumber = double.Parse(tbxLoyaltyNumber.Text);
@@ -274,6 +276,7 @@ public partial class _Default : System.Web.UI.Page
         //Open DB connection and save the order.
         using (GroceryStoreSimulatorContext context = new GroceryStoreSimulatorContext())
         {
+            //Get the id for the loyalty number
             int loyaltyId = 0;
             var loyalties = context.Loyalty.ToList();
             foreach (var loyalty in loyalties)
@@ -284,6 +287,7 @@ public partial class _Default : System.Web.UI.Page
                     break;
                 }
             }
+            //Create the record to save to the DB for product table
             TableOrder tableOrder = new TableOrder()
             {
                 LoyaltyID = loyaltyId,
@@ -291,12 +295,14 @@ public partial class _Default : System.Web.UI.Page
                 OrderStatusID = context.OrderStatus.FirstOrDefault(x => x.IsOpen).OrderStatusID,
                 StoreID = ((global_asax)this.Context.ApplicationInstance).orderInformation.StoreId
             };
-
+            //Save it to the DB
             context.Order.Add(tableOrder);
             context.SaveChanges();
             var tableOrderSaved = context.Entry(tableOrder);
+            //Grab that record's ID and save it as the order number
             ((global_asax)this.Context.ApplicationInstance).orderInformation.OrderNumber = tableOrderSaved.Entity.OrderID;
 
+            //For each product, save an order summary detail record linked to the order we just made.
             foreach (var product in ((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart)
             {
                 decimal totalCost = 0;
@@ -313,7 +319,9 @@ public partial class _Default : System.Web.UI.Page
                 context.SaveChanges();
             }
         }
+        //Calculate total cost of the order based on each item/quantity, save it to the session
         ((global_asax)this.Context.ApplicationInstance).orderInformation.TotalOrderCost = totalOrderCost;
+        //Redirect to the order confirmation
         Response.Redirect("/OrderConfirmation.aspx");
     }
 }
