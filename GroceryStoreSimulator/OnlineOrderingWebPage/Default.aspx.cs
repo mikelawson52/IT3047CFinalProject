@@ -257,10 +257,12 @@ public partial class _Default : System.Web.UI.Page
             lblCurrentShoppingCart.Text = "";
             using (GroceryStoreSimulatorContext context = new GroceryStoreSimulatorContext())
             {
+                
                 foreach (var product in ((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart)
                 {
                     var selectedProduct = context.Product.Include(x => x.Name).FirstOrDefault(x => x.ProductID == product.Key);
-                    lblCurrentShoppingCart.Text += "<br />" + "Item: " + selectedProduct.Name.Name.Trim() + "  -  Quantity: " + product.Value + " - $" + product.Value * selectedProduct.InitialPricePerSellableUnit;
+                   
+                    lblCurrentShoppingCart.Text += "<br />" + "Item: " + selectedProduct.Name.Name.Trim() + "  -  Quantity: " + product.Value + " - $" + product.Value * Math.Round(selectedProduct.InitialPricePerSellableUnit);
                 }
             }
         }

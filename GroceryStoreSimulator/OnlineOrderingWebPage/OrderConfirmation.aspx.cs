@@ -28,7 +28,7 @@ public partial class OrderConfirmation : System.Web.UI.Page
                 //todo - add actual product names
                 lblOrderInfo.Text += "<br />" + "Item: " + productInDB.Name.Name.Trim() + "  -  Quantity: " + product.Value;
             }
-            lblOrderInfo.Text += "<br />" + "Total Order Cost: $" + ((global_asax)this.Context.ApplicationInstance).orderInformation.TotalOrderCost;
+            lblOrderInfo.Text += "<br />" + "Total Order Cost: $" + Math.Round(((global_asax)this.Context.ApplicationInstance).orderInformation.TotalOrderCost, 2);
         }
         //Reset the session variable now that the order is placed.
         ((global_asax)this.Context.ApplicationInstance).orderInformation = new OrderInformation();
