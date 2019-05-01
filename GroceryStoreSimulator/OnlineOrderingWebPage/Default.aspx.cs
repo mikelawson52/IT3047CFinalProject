@@ -1,4 +1,11 @@
-﻿using System;
+﻿/**********************************************
+ * Name: Mike Lawson and Tiffany Litteral 
+ * Final Project 
+ * IT3047C/001/Spring 2019
+ * 05/01/2019
+ * Form to enter loyalty information and submit order. 
+ * *******************************************/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -224,7 +231,7 @@ public partial class _Default : System.Web.UI.Page
         {
             //Check for quantity being an integer and != 0
             bool isQuantityAnInt = int.TryParse(tbxSelectQuantity.Text, out quantity);
-            if (!isQuantityAnInt || quantity == 0)
+            if (!isQuantityAnInt || quantity <= 0)
             {
                 lblWarningQuantityNaN.Visible = true;
                 isValidProductAndQuantity = false;
@@ -256,72 +263,83 @@ public partial class _Default : System.Web.UI.Page
             }
             //show the user whats in their cart
             lblCurrentShoppingCart.Text = "";
+            //Reset empty cart warning if you add a product to the cart.
+            lblWarningEmptyCart.Visible = false;
             using (GroceryStoreSimulatorContext context = new GroceryStoreSimulatorContext())
             {
+                
                 foreach (var product in ((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart)
                 {
                     var selectedProduct = context.Product.Include(x => x.Name).FirstOrDefault(x => x.ProductID == product.Key);
-                    lblCurrentShoppingCart.Text += "<br />" + "Item: " + selectedProduct.Name.Name.Trim() + "  -  Quantity: " + product.Value + " - $" + product.Value * selectedProduct.InitialPricePerSellableUnit;
+                   
+                    lblCurrentShoppingCart.Text += "<br />" + "Item: " + selectedProduct.Name.Name.Trim() + "  -  Quantity: " + product.Value + " - $" + product.Value * Math.Round(selectedProduct.InitialPricePerSellableUnit, 2);
                 }
             }
         }
     }
     protected void btnSubmitOrder_Click(object sender, EventArgs e)
     {
-        //Add storeId and loyalty number to the session
-        decimal totalOrderCost = 0;
-        ((global_asax)this.Context.ApplicationInstance).orderInformation.StoreId = int.Parse(lbxSelectStore.SelectedItem.Value);
-        ((global_asax)this.Context.ApplicationInstance).orderInformation.LoyaltyNumber = double.Parse(tbxLoyaltyNumber.Text);
-
-        //Open DB connection and save the order.
-        using (GroceryStoreSimulatorContext context = new GroceryStoreSimulatorContext())
+        if (((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart.Any())
         {
-            //Get the id for the loyalty number
-            int loyaltyId = 0;
-            var loyalties = context.Loyalty.ToList();
-            foreach (var loyalty in loyalties)
+            decimal totalOrderCost = 0;
+            ((global_asax)this.Context.ApplicationInstance).orderInformation.StoreId = int.Parse(lbxSelectStore.SelectedItem.Value);
+            ((global_asax)this.Context.ApplicationInstance).orderInformation.LoyaltyNumber = double.Parse(tbxLoyaltyNumber.Text);
+
+            //Open DB connection and save the order.
+            using (GroceryStoreSimulatorContext context = new GroceryStoreSimulatorContext())
             {
-                if (double.Parse(loyalty.LoyaltyNumber.Trim()) == ((global_asax)this.Context.ApplicationInstance).orderInformation.LoyaltyNumber)
+                int loyaltyId = 0;
+                var loyalties = context.Loyalty.ToList();
+                foreach (var loyalty in loyalties)
                 {
-                    loyaltyId = loyalty.LoyaltyID;
-                    break;
+                    if (double.Parse(loyalty.LoyaltyNumber.Trim()) == ((global_asax)this.Context.ApplicationInstance).orderInformation.LoyaltyNumber)
+                    {
+                        loyaltyId = loyalty.LoyaltyID;
+                        break;
+                    }
+                }
+                TableOrder tableOrder = new TableOrder()
+                {
+                    LoyaltyID = loyaltyId,
+                    DateTimeCreated = DateTime.Now,
+                    OrderStatusID = context.OrderStatus.FirstOrDefault(x => x.IsOpen).OrderStatusID,
+                    StoreID = ((global_asax)this.Context.ApplicationInstance).orderInformation.StoreId
+                };
+
+                context.Order.Add(tableOrder);
+                context.SaveChanges();
+                var tableOrderSaved = context.Entry(tableOrder);
+                ((global_asax)this.Context.ApplicationInstance).orderInformation.OrderNumber = tableOrderSaved.Entity.OrderID;
+
+                foreach (var product in ((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart)
+                {
+                    decimal totalCost = 0;
+                    totalCost = context.Product.FirstOrDefault(x => x.ProductID == product.Key).InitialPricePerSellableUnit * product.Value;
+                    totalOrderCost += totalCost;
+                    TableOrderDetail tableOrderDetail = new TableOrderDetail()
+                    {
+                        OrderID = tableOrderSaved.Entity.OrderID,
+                        ProductID = product.Key,
+                        Quantity = product.Value,
+                        TotalAmountChargedToCustomer = totalCost
+                    };
+                    context.OrderDetail.Add(tableOrderDetail);
+                    context.SaveChanges();
                 }
             }
-            //Create the record to save to the DB for product table
-            TableOrder tableOrder = new TableOrder()
-            {
-                LoyaltyID = loyaltyId,
-                DateTimeCreated = DateTime.Now,
-                OrderStatusID = context.OrderStatus.FirstOrDefault(x => x.IsOpen).OrderStatusID,
-                StoreID = ((global_asax)this.Context.ApplicationInstance).orderInformation.StoreId
-            };
-            //Save it to the DB
-            context.Order.Add(tableOrder);
-            context.SaveChanges();
-            var tableOrderSaved = context.Entry(tableOrder);
-            //Grab that record's ID and save it as the order number
-            ((global_asax)this.Context.ApplicationInstance).orderInformation.OrderNumber = tableOrderSaved.Entity.OrderID;
-
-            //For each product, save an order summary detail record linked to the order we just made.
-            foreach (var product in ((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart)
-            {
-                decimal totalCost = 0;
-                totalCost = context.Product.FirstOrDefault(x => x.ProductID == product.Key).InitialPricePerSellableUnit * product.Value;
-                totalOrderCost += totalCost;
-                TableOrderDetail tableOrderDetail = new TableOrderDetail()
-                {
-                    OrderID = tableOrderSaved.Entity.OrderID,
-                    ProductID = product.Key,
-                    Quantity = product.Value,
-                    TotalAmountChargedToCustomer = totalCost
-                };
-                context.OrderDetail.Add(tableOrderDetail);
-                context.SaveChanges();
-            }
-        }
-        //Calculate total cost of the order based on each item/quantity, save it to the session
         ((global_asax)this.Context.ApplicationInstance).orderInformation.TotalOrderCost = totalOrderCost;
-        //Redirect to the order confirmation
-        Response.Redirect("/OrderConfirmation.aspx");
+            Response.Redirect("/OrderConfirmation.aspx");
+        }
+        else
+        {
+            lblWarningEmptyCart.Visible = true;
+        }
+    }
+
+    protected void btnResetOrder_Click(object sender, EventArgs e)
+    {
+        ((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart = new Dictionary<int, int>();
+        lblCurrentShoppingCart.Text = "";
+        
     }
 }

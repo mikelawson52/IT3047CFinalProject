@@ -25,6 +25,7 @@
             <div id="divBody" runat="server" class="card text-white bg-info border-dark h2">
                 <asp:Label ID="lblHeading4" runat="server" Text="Your Order" CssClass=" card-header text-white display-4 text-center"></asp:Label><br />
                 <asp:Label ID="lblOrderInfo" runat="server" Text="" CssClass="h2 text-white"></asp:Label><br />
+                
             </div>
         </div>
     </form>
