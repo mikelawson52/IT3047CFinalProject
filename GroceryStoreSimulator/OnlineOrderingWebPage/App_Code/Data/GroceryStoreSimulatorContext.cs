@@ -1,4 +1,10 @@
-﻿using System;
+﻿/**********************************************
+ * Name: Mike Lawson and Tiffany Litteral 
+ * Final Project 
+ * IT3047C/001/Spring 2019
+ * 05/01/2019
+ * *******************************************/
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;

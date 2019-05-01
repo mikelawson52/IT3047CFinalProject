@@ -14,14 +14,14 @@
     <form id="frmOrderForm" runat="server">
         <div id="divContent" runat="server" class="jumbotron container bg-light">
             <div id="divHead" runat="server" class="row">
-            <asp:Image ID="imgGroceries1" runat="server" ImageUrl="App_Themes/DefaultTheme/Groceries.bmp" CssClass="col-sm-1" />
-            <asp:Label ID="lblHeading1" runat="server" Text="General Grocery Store" CssClass="display-2 text-center text-primary col-sm-10 "></asp:Label>
-            <asp:Image ID="imgGroceries2" runat="server" ImageUrl="App_Themes/DefaultTheme/Groceries.bmp" CssClass="col-sm-1" />
+                <asp:Image ID="imgGroceries1" runat="server" ImageUrl="App_Themes/DefaultTheme/Groceries.bmp" CssClass="col-sm-1" />
+                <asp:Label ID="lblHeading1" runat="server" Text="General Grocery Store" CssClass="display-2 text-center text-primary col-sm-10 "></asp:Label>
+                <asp:Image ID="imgGroceries2" runat="server" ImageUrl="App_Themes/DefaultTheme/Groceries.bmp" CssClass="col-sm-1" />
                 <br />
-                </div>
+            </div>
             <asp:Label ID="lblHeading2" runat="server" Text="Online Grocery Order Form" CssClass=" display-4 text-center text-dark"></asp:Label>
             <br />
-            <hr />            
+            <hr />
             <div id="divBody" runat="server" class="form-group bg-light">
                 <asp:Label ID="lblHeading3" runat="server" Text="ENTER YOUR LOYALTY NUMBER AND SELECT YOUR STORE" CssClass=" bg-light text-primary align-content-sm-center h1"></asp:Label>
                 <div id="divRow1" runat="server" class="row">
@@ -64,13 +64,14 @@
                         <div id="divSelectedQuantity" runat="server" class="col-sm-4">
                             <asp:Label ID="lblSelectQuantity" runat="server" Text="Quantity:" CssClass="h2 text-dark"></asp:Label>
                             <asp:TextBox ID="tbxSelectQuantity" runat="server" Text="" CssClass="form-control"></asp:TextBox>
-                            <asp:Label ID="lblWarningQuantityNaN" runat="server" Text="Your quantity must be a number with no decimals and not equal to 0." CssClass="alert-warning" Visible="false"></asp:Label>
+                            <asp:Label ID="lblWarningQuantityNaN" runat="server" Text="Your quantity must be a number with no decimals and not equal to or less than 0." CssClass="alert-warning" Visible="false"></asp:Label>
                             <asp:Label ID="lblWarningQuantityEmpty" runat="server" Text="You must input a quantity to add a product to your cart!" CssClass="alert-warning" Visible="false"></asp:Label>
                             <br />
                             <br />
                         </div>
                     </div>
-                        <asp:Button ID="btnAddProductToOrder" runat="server" Text="Add" CssClass="btn btn-dark btn-block btn-lg " OnClick="btnAddProductToOrder_Click" />
+                    <asp:Button ID="btnAddProductToOrder" runat="server" Text="Add" CssClass="btn btn-dark btn-block btn-lg " OnClick="btnAddProductToOrder_Click" />
+                    <asp:Button ID="btnResetOrder" runat="server" Text="Clear Cart" CssClass="btn btn-dark btn-block btn-lg" OnClick="btnResetOrder_Click" />
                     <br />
                     <br />
                     <%-- Shows the user what they have in their cart --%>
@@ -79,6 +80,9 @@
                         <asp:Label ID="lblCurrentShoppingCart" runat="server" Text="" CssClass="font-italic h2"></asp:Label>
                         <br />
                         <br />
+                    </div>
+                    <div id="divWarning" class="alert-warning">
+                        <asp:Label ID="lblWarningEmptyCart" runat="server" Text="You must have items in your cart to submit an order!" Visible="false"></asp:Label>
                     </div>
                     <%-- Submit entire order to database --%>
                     <asp:Button ID="btnSubmitOrder" runat="server" Text="Submit Order" CssClass="btn btn-dark btn-lg btn-block" OnClick="btnSubmitOrder_Click" />
