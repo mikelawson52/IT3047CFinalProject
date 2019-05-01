@@ -173,6 +173,15 @@ public partial class _Default : System.Web.UI.Page
             }
             //Make new section visible
             divBodyHidden.Visible = true;
+            lblHeading3.Visible = false;
+            lblLoyaltyNumber.Text += tbxLoyaltyNumber.Text;
+            lblSelectStore.Text += selectedStore.Text;
+            tbxLoyaltyNumber.Visible = false;   
+            lbxSelectStore.Visible = false;
+            btnSelect.Visible = false;
+            break1.Visible = false;
+            break2.Visible = false;
+
         }
         //Else, reset the next section to be not visible.
         else
@@ -186,8 +195,8 @@ public partial class _Default : System.Web.UI.Page
         bool isValidProductAndQuantity = true;
 
         //Check for a selected product
-        ListItem selectedStore = lbxSelectProduct.SelectedItem;
-        if (selectedStore == null)
+        ListItem selectedProductLbxItem = lbxSelectProduct.SelectedItem;
+        if (selectedProductLbxItem == null)
         {
             lblWarningProduct.Visible = true;
             isValidProductAndQuantity = false;
@@ -235,7 +244,7 @@ public partial class _Default : System.Web.UI.Page
 
         if (isValidProductAndQuantity)
         {
-            int selectedProductId = int.Parse(selectedStore.Value);
+            int selectedProductId = int.Parse(selectedProductLbxItem.Value);
             if (((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart.ContainsKey(selectedProductId))
             {
                 ((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart[selectedProductId] += quantity;
