@@ -17,4 +17,5 @@ public class OrderInformation
     public double LoyaltyNumber { get; set; }
     public int StoreId { get; set; }
     public decimal TotalOrderCost { get; set; }
+    public int OrderNumber { get; set; }
 }
