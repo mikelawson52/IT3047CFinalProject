@@ -183,7 +183,7 @@ public partial class _Default : System.Web.UI.Page
             lblHeading3.Visible = false;
             lblLoyaltyNumber.Text += tbxLoyaltyNumber.Text;
             lblSelectStore.Text += selectedStore.Text;
-            tbxLoyaltyNumber.Visible = false;   
+            tbxLoyaltyNumber.Visible = false;
             lbxSelectStore.Visible = false;
             btnSelect.Visible = false;
             break1.Visible = false;
@@ -267,11 +267,11 @@ public partial class _Default : System.Web.UI.Page
             lblWarningEmptyCart.Visible = false;
             using (GroceryStoreSimulatorContext context = new GroceryStoreSimulatorContext())
             {
-                
+
                 foreach (var product in ((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart)
                 {
                     var selectedProduct = context.Product.Include(x => x.Name).FirstOrDefault(x => x.ProductID == product.Key);
-                   
+
                     lblCurrentShoppingCart.Text += "<br />" + "Item: " + selectedProduct.Name.Name.Trim() + "  -  Quantity: " + product.Value + " - $" + product.Value * Math.Round(selectedProduct.InitialPricePerSellableUnit, 2);
                 }
             }
@@ -279,8 +279,10 @@ public partial class _Default : System.Web.UI.Page
     }
     protected void btnSubmitOrder_Click(object sender, EventArgs e)
     {
+        //If the cart isn't empty, start to save to DB
         if (((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart.Any())
         {
+            //Set session storeid and loyalty number
             decimal totalOrderCost = 0;
             ((global_asax)this.Context.ApplicationInstance).orderInformation.StoreId = int.Parse(lbxSelectStore.SelectedItem.Value);
             ((global_asax)this.Context.ApplicationInstance).orderInformation.LoyaltyNumber = double.Parse(tbxLoyaltyNumber.Text);
@@ -298,6 +300,7 @@ public partial class _Default : System.Web.UI.Page
                         break;
                     }
                 }
+                //create record to be put in DB
                 TableOrder tableOrder = new TableOrder()
                 {
                     LoyaltyID = loyaltyId,
@@ -305,12 +308,13 @@ public partial class _Default : System.Web.UI.Page
                     OrderStatusID = context.OrderStatus.FirstOrDefault(x => x.IsOpen).OrderStatusID,
                     StoreID = ((global_asax)this.Context.ApplicationInstance).orderInformation.StoreId
                 };
-
+                //Save to DB
                 context.Order.Add(tableOrder);
                 context.SaveChanges();
                 var tableOrderSaved = context.Entry(tableOrder);
+                //Save the inserted record Id as the order number
                 ((global_asax)this.Context.ApplicationInstance).orderInformation.OrderNumber = tableOrderSaved.Entity.OrderID;
-
+                //Save each product attached to the order as a record in the order details table
                 foreach (var product in ((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart)
                 {
                     decimal totalCost = 0;
@@ -327,9 +331,11 @@ public partial class _Default : System.Web.UI.Page
                     context.SaveChanges();
                 }
             }
+            //Redirect to order confirmation
         ((global_asax)this.Context.ApplicationInstance).orderInformation.TotalOrderCost = totalOrderCost;
             Response.Redirect("/OrderConfirmation.aspx");
         }
+        //Else there was nothing in the cart, show the warning
         else
         {
             lblWarningEmptyCart.Visible = true;
@@ -340,6 +346,6 @@ public partial class _Default : System.Web.UI.Page
     {
         ((global_asax)this.Context.ApplicationInstance).orderInformation.ShoppingCart = new Dictionary<int, int>();
         lblCurrentShoppingCart.Text = "";
-        
+
     }
 }
