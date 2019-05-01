@@ -21,7 +21,7 @@
             <asp:Label ID="lblHeading2" runat="server" Text="Order Confirmation" CssClass="display-4 text-center text-dark"></asp:Label><br />
             <br />
             <hr />
-            <asp:Label ID="lblHeading3" runat="server" Text="Thank you for ordering!" CssClass="display-1 text-center text-Primary"></asp:Label>
+            <asp:Label ID="lblHeading3" runat="server" Text="Thank you for ordering!" CssClass="display-1 text-center text-Primary"></asp:Label><br /><br />
             <div id="divBody" runat="server" class="card text-white bg-info border-dark h2">
                 <asp:Label ID="lblHeading4" runat="server" Text="Your Order" CssClass=" card-header text-white display-4 text-center"></asp:Label><br />
                 <asp:Label ID="lblOrderInfo" runat="server" Text="" CssClass="h2 text-white"></asp:Label><br />
